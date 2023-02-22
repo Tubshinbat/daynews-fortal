@@ -8,38 +8,23 @@ import {
   faClock,
   faPhoneVolume,
 } from "@fortawesome/free-solid-svg-icons";
-import MobileMenu from "./Home/mobileMenu";
+
 import { useEffect, useState } from "react";
+import MobileMenu from "./MobileMenu";
 
-export default ({ info, menus, socialLinks }) => {
-  const [phoneNumber, setPhoneNumber] = useState([]);
-
-  useEffect(() => {
-    if (info.phone) {
-      const phones = info.phone.split(",");
-      setPhoneNumber(phones);
-    }
-  }, [info]);
+export default ({ webInfo, menus, socialLinks, weather, rates }) => {
+  const [weathers] = useState(weather && JSON.parse(weather).xml);
 
   const renderMenu = (categories, child = false, parentSlug = "") => {
     let myCategories = [];
     categories &&
       categories.map((el) => {
         myCategories.push(
-          <li key={el._id} className={el.children.length > 0 && "dropMenu"}>
-            {el.isDirect === true && <a href={el.direct}>{el.name}</a>}
-            {el.isModel === true && (
-              <Link href={`/${el.model}`} scroll={false}>
-                {el.name}
-              </Link>
-            )}
-
-            {el.isDirect === false && el.isModel === false && (
-              <Link href={`/page/${el.slug}`} scroll={false}>
-                {" "}
-                {el.name}
-              </Link>
-            )}
+          <li className={el.children.length > 0 && "dropMenu"}>
+            <Link key={el._id} href={`/news/${el.slug}`} scroll={false}>
+              {" "}
+              {el.name}
+            </Link>
 
             {el.children.length > 0 && !child ? (
               <ul className={`dropdownMenu`}>
@@ -54,69 +39,67 @@ export default ({ info, menus, socialLinks }) => {
   };
 
   useEffect(() => {
-    window.onscroll = () => {
-      let header = document.querySelector(".main__header");
-
-      let sticky = header.offsetTop;
-      if (window.pageYOffset > sticky) {
-        header.classList.add(`headerSticky`);
-      } else {
-        header.classList.remove(`headerSticky`);
-      }
-    };
+    // window.onscroll = () => {
+    //   let header = document.querySelector(".main__header");
+    //   let sticky = header.offsetTop;
+    //   if (window.pageYOffset > sticky) {
+    //     header.classList.add(`headerSticky`);
+    //   } else {
+    //     header.classList.remove(`headerSticky`);
+    //   }
+    // };
   }, []);
 
   return (
     <>
-      <div className="topbar">
+      <header className="main__header">
         <div className="container">
-          <div className="topbarContainer">
-            <div className="topContact">
-              <div className="topSocials">
-                {socialLinks &&
-                  socialLinks.map((el) => (
-                    <a href={el.link} target="_blank" key={el._id + "social"}>
-                      <i
-                        className={`fa-brands fa-${el.name.toLowerCase()}`}
-                      ></i>
-                    </a>
-                  ))}
-              </div>
-              <div className="topLinks">
-                <a href={`tel:${phoneNumber && phoneNumber[0]}`}>
-                  <i className="fa-solid fa-phone"></i>
-                  {phoneNumber && phoneNumber[0]}
-                </a>
-                <a href={`mailto:${info.email}`}>
-                  <i className="fa-solid fa-envelope"></i>
-                  {info.email}
+          <div className="top_header">
+            <div className="header-left">
+              <div className="logo">
+                <a href="/">
+                  <img
+                    src={`${base.cdnUrl}/${webInfo.logo}`}
+                    className="headerLogo"
+                  />
                 </a>
               </div>
             </div>
+
+            <div className="header_boards">
+              <div className="header_board">
+                <img src="/images/sun.svg" />
+                <div className="board-text">
+                  <span>Улаанбаатар</span>
+                  <p>
+                    {weathers &&
+                      weathers.forecast5day &&
+                      weathers.forecast5day[26].data.weather[0].temperatureDay
+                        ._text}
+                  </p>
+                </div>
+              </div>
+              <div className="header_board">
+                <img src="/images/usa.jpg" />
+                <div className="board-text">
+                  <span>Валютын ханш</span>
+                  <p>{rates && rates[13].sellRate}</p>
+                </div>
+              </div>
+            </div>
+            <MobileMenu
+              info={webInfo}
+              socialLinks={socialLinks}
+              menus={menus}
+            />
           </div>
         </div>
-      </div>
-      <div className={`mainHeader main__header`}>
+      </header>
+      <nav className="header_top_menu">
         <div className="container">
-          <div className="header ">
-            <div className={`logo`}>
-              <Link href="/">
-                <img src={`${base.cdnUrl}/${info.logo}`} />
-              </Link>
-            </div>
-            <nav>
-              <ul className={`headerMenu`}>{renderMenu(menus)}</ul>
-            </nav>
-            <div className={`headerContact`}>
-              <a href={`tel:${phoneNumber && phoneNumber[0]}`}>
-                <FontAwesomeIcon icon={faPhoneVolume} />{" "}
-                {phoneNumber && phoneNumber[0]}
-              </a>
-            </div>
-            <MobileMenu info={info} socialLinks={socialLinks} menus={menus} />
-          </div>
+          <ul className={`headerMenu`}>{renderMenu(menus)}</ul>
         </div>
-      </div>
+      </nav>
     </>
   );
 };

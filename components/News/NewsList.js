@@ -13,7 +13,7 @@ import ReactTimeAgo from "react-time-ago";
 
 import en from "javascript-time-ago/locale/en.json";
 import mn from "javascript-time-ago/locale/mn.json";
-import { getNews } from "lib/news";
+import { getNews, getSlugCategory } from "lib/news";
 import Loading from "app/loading";
 import NotFound from "components/NotFound";
 TimeAgo.addDefaultLocale(mn);
@@ -21,170 +21,50 @@ TimeAgo.addLocale(en);
 
 const { htmlToText } = require("html-to-text");
 
-const NewsList = ({ news, pagination: initPagination, params }) => {
+const NewsList = ({
+  news,
+  pagination: initPagination,
+  params,
+  categoryslug,
+}) => {
   // Params
-  const router = useRouter();
-  const pathname = usePathname();
 
-  const searchParams = useSearchParams();
-  const urlParams = new URLSearchParams(`${searchParams.toString()}`);
-  const [category, setCategory] = useState("Мэдээ мэдээлэл");
   const [data, setData] = useState(news);
-  const [pagination, setPagination] = useState(initPagination);
   const [loading, setLoading] = useState(false);
-  const [listType, setListType] = useState("column");
+  const [pagination, setPagination] = useState(initPagination);
 
-  const queryBuild = (key, event) => {
-    urlParams.set(key, event);
-    router.push(`${pathname}?${urlParams}`);
-  };
+  const handlePageChange = async (pageNumber) => {
+    const { category: resultCategory } = await getSlugCategory(categoryslug);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { news, pagination } = await getNews(searchParams.toString());
+    const { news, pagination } = await getNews(
+      `status=true&categories=${
+        resultCategory && resultCategory._id
+      }&page=${pageNumber}`
+    );
+
+    if (news) {
       setPagination(pagination);
-      setData(news);
-    };
-
-    const cat = searchParams.get("category");
-    setCategory(cat);
-
-    fetchData();
-  }, []);
-
-  //-- PAGINATION
-
-  const [activePage, setActivePage] = useState(1);
-  const [limit, setLimit] = useState({});
-  const [total, setTotal] = useState();
-
-  const handlePageChange = (pageNumber) => {
-    queryBuild("page", pageNumber);
-    window.scrollTo(0, 0);
-    setActivePage(pageNumber);
-  };
-
-  useEffect(() => {
-    if (pagination) {
-      setTotal(pagination.total);
-      setLimit(pagination.limit);
+      setData((bn) => [...bn, ...news]);
     }
-  }, [pagination]);
+  };
 
   return (
     <>
       {loading === true && <Loading />}
 
       <div className="section_news_title">
-        <h4>{category || "Мэдээ мэдээлэл"} </h4>
-        <div className="filters__head">
-          <div className="sorter">
-            <select
-              onChange={(event) => queryBuild("sort", event.target.value)}
-            >
-              <option value="createAt_descend" selected>
-                Шинэ нь эхэндээ
-              </option>
-              <option value="createAt_ascend"> Хуучин нь эхэндээ </option>
-              <option value="views_descend"> Үзэлт ихтэй нь эхэндээ </option>
-            </select>
-          </div>
-          <div className="list__type">
-            {listType === "column" && (
-              <i
-                className="fa-solid fa-grip"
-                onClick={() => setListType("grid")}
-              ></i>
-            )}
-            {listType === "grid" && (
-              <i
-                className="fa-solid fa-grip-lines"
-                onClick={() => setListType("column")}
-              ></i>
-            )}
-          </div>
-        </div>
+        <h4> Сүүлд нэмэгдсэн </h4>
       </div>
 
-      <div
-        className="row news_grid"
-        style={{ display: listType === "grid" ? "flex" : "none" }}
-      >
-        {data && data.length > 0 ? (
-          data.map((el) => (
-            <div className="col-md-6">
-              <div className="news__grid_item">
-                <div className="news__gird_image">
-                  {el.type !== "default" && (
-                    <div className="news__type">
-                      {el.type == "audio" && (
-                        <i className="fa-solid fa-volume-high"></i>
-                      )}
-                      {el.type == "video" && (
-                        <i className="fa-solid fa-video"></i>
-                      )}
-                    </div>
-                  )}
-                  <a href={`/news/${el._id}`} scroll={false}>
-                    {el.pictures && el.pictures[0] ? (
-                      <img src={`${base.cdnUrl}/450/${el.pictures[0]}`} />
-                    ) : (
-                      <img src={`/images/img_notfound.jpg`} />
-                    )}
-                  </a>
-                </div>
-                <div className="news_grid_content">
-                  <a href={`/news/${el._id}`} scroll={false}>
-                    <h4>
-                      {el.name.length > 90
-                        ? el.name.substr(0, 90) + "..."
-                        : el.name}
-                    </h4>
-                  </a>
-                  <div className="news_grid_dt">
-                    <li>
-                      <FontAwesomeIcon icon={faBolt} /> {el.views}
-                    </li>
-                    <li>
-                      <FontAwesomeIcon icon={faClock} />
-                      <ReactTimeAgo date={el.createAt} locale="mn" />
-                    </li>
-                  </div>
-                  <p>
-                    {htmlToFormattedText(el.details).length > 170
-                      ? htmlToFormattedText(el.details).substr(0, 170) + "..."
-                      : htmlToFormattedText(el.details)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <NotFound />
-        )}
-      </div>
-      <div
-        className="row news_col"
-        style={{ display: listType === "column" ? "flex" : "none" }}
-      >
+      <div className="row news_col">
         {data && data.length > 0 ? (
           data.map((el) => (
             <div className="col-md-12">
               <div className="news__column_item">
                 <div className="row">
                   <div className="col-md-4">
-                    <div className="news__column_image">
-                      {el.type !== "default" && (
-                        <div className="news__type">
-                          {el.type == "audio" && (
-                            <i className="fa-solid fa-volume-high"></i>
-                          )}
-                          {el.type == "video" && (
-                            <i className="fa-solid fa-video"></i>
-                          )}
-                        </div>
-                      )}
-                      <a href={`/news/${el._id}`} scroll={false}>
+                    <div className="news__column_image column-news-image">
+                      <a href={`/n/${el._id}`} scroll={false}>
                         {el.pictures && el.pictures[0] ? (
                           <img src={`${base.cdnUrl}/450/${el.pictures[0]}`} />
                         ) : (
@@ -195,14 +75,15 @@ const NewsList = ({ news, pagination: initPagination, params }) => {
                   </div>
                   <div className="col-md-8">
                     <div className="news__column_content">
-                      <a href={`/news/${el._id}`} scroll={false}>
+                      <a href={`/n/${el._id}`} scroll={false}>
                         <h4>
                           {el.name.length > 90
                             ? el.name.substr(0, 90) + "..."
                             : el.name}
                         </h4>
                       </a>
-                      <div className="news_grid_dt">
+
+                      <div className="news_highlight_dt">
                         <li>
                           <FontAwesomeIcon icon={faBolt} /> {el.views}
                         </li>
@@ -228,19 +109,19 @@ const NewsList = ({ news, pagination: initPagination, params }) => {
           <NotFound />
         )}
       </div>
-      {total && data && data.length > 0 && (
-        <div className={`pagination__list`}>
-          <Pagination
-            activePage={parseInt(searchParams.get("page")) || 1}
-            itemClass={`page-item`}
-            linkClass={"page-link"}
-            itemsCountPerPage={limit}
-            totalItemsCount={total}
-            pageRangeDisplayed={5}
-            onChange={handlePageChange.bind()}
-          />
-        </div>
-      )}
+      {pagination &&
+        pagination.pageCount > 1 &&
+        pagination.page != pagination.pageCount && (
+          <button
+            className="more-btn"
+            onClick={() => {
+              handlePageChange(pagination.nextPage);
+            }}
+          >
+            {" "}
+            Цааш үзэх{" "}
+          </button>
+        )}
     </>
   );
 };

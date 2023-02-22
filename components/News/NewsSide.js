@@ -3,17 +3,29 @@ import { faBolt, faClock, faFireAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import base from "lib/base";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TimeAgo from "javascript-time-ago";
 import ReactTimeAgo from "react-time-ago";
 
 import en from "javascript-time-ago/locale/en.json";
 import mn from "javascript-time-ago/locale/mn.json";
+import { getAdsSide } from "lib/ads";
 TimeAgo.addDefaultLocale(mn);
 TimeAgo.addLocale(en);
 
-export default ({ ads, categories, newNews, fireNews }) => {
+export default ({ categories, newNews, fireNews }) => {
   const [selectTab, setSelectTab] = useState("new");
+  const [ads, setAds] = useState(null);
+
+  useEffect(() => {
+    const fetcherAds = async () => {
+      const { ads } = await getAdsSide();
+      setAds(ads);
+    };
+
+    fetcherAds();
+  }, []);
+
   return (
     <>
       <div className="sides ">
@@ -28,123 +40,71 @@ export default ({ ads, categories, newNews, fireNews }) => {
           </div>
         )}
         <div className="side__item">
-          <h4 className="side__item_title">Ангилал </h4>
-          <div className="side__main">
-            <div className="categories__list">
-              {categories.map((el) => (
-                <a href={`/news?category=${el.name}`} scroll={false}>
-                  {el.name}{" "}
-                </a>
+          <div className="side-news-home-mobile">
+            <div class="section-header">
+              <h3> Шинэ мэдээ </h3>
+            </div>
+            {newNews &&
+              newNews.map((el) => (
+                <div className="side-news">
+                  <div className="side-news-content">
+                    <a className="side-news-link" href={"/n/" + el.slug}>
+                      {el.name}
+                    </a>
+                    <div className="newsbox-categories">
+                      <a href={"/news/" + el.categories[0].slug}>
+                        {el.categories[0].name}
+                      </a>
+                    </div>
+                    <div className="news_highlight_dt">
+                      <li>
+                        <FontAwesomeIcon icon={faBolt} /> {el.views}
+                      </li>
+                      <li>
+                        <FontAwesomeIcon icon={faClock} />
+                        <ReactTimeAgo date={el.createAt} locale="mn" />
+                      </li>
+                    </div>
+                  </div>
+                  <div className="side-news-img">
+                    <a href={"/n/" + el.slug}>
+                      <img src={base.cdnUrl + "/150x150/" + el.pictures[0]} />
+                    </a>
+                  </div>
+                </div>
               ))}
-            </div>
           </div>
-        </div>
-        <div className="side__item home__side_tab">
-          <div className="tab__side_option">
-            <div
-              className={`tab__option ${selectTab == "new" && "active"}`}
-              onClick={() => setSelectTab("new")}
-            >
-              <FontAwesomeIcon icon={faClock} />
-              Сүүлд орсон
-            </div>
-            <div
-              className={`tab__option ${selectTab == "top" && "active"}`}
-              onClick={() => setSelectTab("top")}
-            >
-              <FontAwesomeIcon icon={faFireAlt} />
-              Топ мэдээ
-            </div>
-          </div>
-          <div
-            className="tab__side_lists"
-            style={{ display: selectTab == "new" ? "block" : "none" }}
-          >
-            {newNews.map((news) => (
-              <div className="tab__side_item">
-                <a href={`/news/${news._id}`} scroll={false}>
-                  {news.pictures && news.pictures[0] ? (
-                    <img src={`${base.cdnUrl}/150x150/${news.pictures[0]}`} />
-                  ) : (
-                    <img src="/images/img_notfound.jpg" />
-                  )}
-                </a>
-                <div className="tab__side_content">
-                  <a href={`/news/${news._id}`} scroll={false}>
-                    <h6>
-                      {news.name.length > 55
-                        ? news.name.substr(0, 55) + "..."
-                        : news.name}
-                    </h6>
-                  </a>
-                  <div className="tab__side_dt">
-                    <li>
-                      <FontAwesomeIcon icon={faBolt} /> {news.views}
-                    </li>
-                    <li>
-                      <FontAwesomeIcon icon={faClock} />
-                      <ReactTimeAgo date={news.createAt} locale="mn" />
-                    </li>
+          <div className="side-news-box">
+            {newNews &&
+              newNews.map((el) => (
+                <div className="side-news">
+                  <div className="side-news-content">
+                    <a className="side-news-link" href={"/n/" + el.slug}>
+                      {el.name}
+                    </a>
+                    <div className="newsbox-categories">
+                      <a href={"/news/" + el.categories[0].slug}>
+                        {el.categories[0].name}
+                      </a>
+                    </div>
+                    <div className="news_highlight_dt">
+                      <li>
+                        <FontAwesomeIcon icon={faBolt} /> {el.views}
+                      </li>
+                      <li>
+                        <FontAwesomeIcon icon={faClock} />
+                        <ReactTimeAgo date={el.createAt} locale="mn" />
+                      </li>
+                    </div>
+                  </div>
+                  <div className="side-news-img">
+                    <a href={"/n/" + el.slug}>
+                      <img src={base.cdnUrl + "/150x150/" + el.pictures[0]} />
+                    </a>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
-          <div
-            className="tab__side_lists"
-            style={{ display: selectTab == "top" ? "block" : "none" }}
-          >
-            {fireNews.map((news) => (
-              <div className="tab__side_item">
-                <Link href={`/news/${news._id}`} scroll={false}>
-                  {news.pictures && news.pictures[0] ? (
-                    <img src={`${base.cdnUrl}/150x150/${news.pictures[0]}`} />
-                  ) : (
-                    <img src="/images/img_notfound.jpg" />
-                  )}
-                </Link>
-                <div className="tab__side_content">
-                  {/* {news.categories && news.categories[0] && (
-                          <Link
-                            href={`/news?categories=${news.categories[0].name}`}
-                            className="tab__side_category"
-                          >
-                            {news.categories[0].name}
-                          </Link>
-                        )} */}
-                  <a href={`/news/${news._id}`} scroll={false}>
-                    <h6>
-                      {news.name.length > 55
-                        ? news.name.substr(0, 55) + "..."
-                        : news.name}
-                    </h6>
-                  </a>
-                  <div className="tab__side_dt">
-                    <li>
-                      <FontAwesomeIcon icon={faBolt} /> {news.views}
-                    </li>
-                    <li>
-                      <FontAwesomeIcon icon={faClock} />
-                      <ReactTimeAgo date={news.createAt} locale="mn" />
-                    </li>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="side__item">
-          <iframe
-            src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fbarilga.gov&tabs&width=340&height=130&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=177358106423628"
-            width={"auto"}
-            height={130}
-            style={{ border: "none", overflow: "hidden" }}
-            scrolling="no"
-            frameBorder={0}
-            allowFullScreen="true"
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-          />
         </div>
       </div>
     </>

@@ -7,7 +7,7 @@
     gap: 12px;
   }
   .burger__menu {
-    display: block;
+    display: none;
   }
 }
 
@@ -15,6 +15,19 @@
   .sides {
     margin-top: 50px;
   }
+     .highlight-img a {
+       position: relative;
+       overflow: hidden;
+       display: flex;
+       justify-items: center;
+       align-items: center;
+       margin-bottom: 5px;
+     }
+.highlight-img img{
+  height:100%;
+  width: auto;
+}
+
   .side__item.ads {
     display: flex;
     justify-content: center;
@@ -80,7 +93,7 @@
     flex-direction: column;
     align-items: center;
     width: 26px;
-    height: 20px;
+    height: 15px;
     cursor: pointer;
     z-index: 1;
     justify-content: space-between;

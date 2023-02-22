@@ -38,6 +38,7 @@
     "react-router-dom": "^6.6.1",
     "react-time-ago": "^7.2.1",
     "react-toastify": "^9.1.1",
-    "swiper": "^8.4.5"
+    "swiper": "^8.4.5",
+    "xml-js": "^1.6.11"
   }
 }

@@ -7,7 +7,7 @@ export default async function Loading() {
   return (
     <>
       <div className="spinner-bg">
-        <img src={`${base.cdnUrl}/${webInfo.whiteLogo}`} />
+        
         <div className="lds-dual-ring"></div>
       </div>
     </>
