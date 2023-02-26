@@ -3,18 +3,20 @@ import base from "lib/base";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default ({ info, menus, socialLinks }) => {
+const Footer = ({ info, menus, socialLinks }) => {
   const [phoneNumber, setPhoneNumber] = useState([]);
   const timeElapsed = Date.now();
   const today = new Date(timeElapsed);
-  let year = today.getFullYear();
+
   useEffect(() => {
     if (info.phone) {
       const phones = info.phone.split(",");
       setPhoneNumber(phones);
     }
   }, [info]);
-
+  const openInNewTab = (url) => {
+    window.open(url, "_blank", "noreferrer");
+  };
   return (
     <>
       <footer className="section">
@@ -56,7 +58,10 @@ export default ({ info, menus, socialLinks }) => {
             <div className="socialsLinks">
               {socialLinks &&
                 socialLinks.map((el) => (
-                  <a href={el.link} target="_blank" key={`${el._id}-social`}>
+                  <a
+                    onClick={() => openInNewTab(el.link)}
+                    key={`${el._id}-social`}
+                  >
                     <i className={`fa-brands fa-${el.name.toLowerCase()}`}></i>
                   </a>
                 ))}
@@ -67,3 +72,5 @@ export default ({ info, menus, socialLinks }) => {
     </>
   );
 };
+
+export default Footer;

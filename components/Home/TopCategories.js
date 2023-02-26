@@ -1,17 +1,23 @@
-"use client";
 import base from "lib/base";
 
 import { faBolt, faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TimeAgo from "javascript-time-ago";
-import ReactTimeAgo from "react-time-ago";
+import moment from "moment";
+import { getMenus } from "lib/menus";
+import { getNews } from "lib/news";
 
-import en from "javascript-time-ago/locale/en.json";
-import mn from "javascript-time-ago/locale/mn.json";
-TimeAgo.addDefaultLocale(mn);
-TimeAgo.addLocale(en);
+const TopCategories = async () => {
+  const { menus } = await getMenus();
+  const { news: topCat1 } = await getNews(
+    `limit=4&status=true&categories=${menus[0]._id}`
+  );
+  const { news: topCat2 } = await getNews(
+    `limit=4&status=true&categories=${menus[1]._id}`
+  );
+  const { news: topCat3 } = await getNews(
+    `limit=4&status=true&categories=${menus[2]._id}`
+  );
 
-const TopCategories = ({ topCat1, topCat2, topCat3, menus }) => {
   return (
     <>
       <section className="section">
@@ -27,7 +33,7 @@ const TopCategories = ({ topCat1, topCat2, topCat3, menus }) => {
                 <div className="row">
                   {topCat1 &&
                     topCat1.map((news) => (
-                      <div className="col-lg-3 col-md-6">
+                      <div className="col-lg-3 col-md-6" key={`nt-${news._id}`}>
                         <div className="column-news-box">
                           <div className="column-news-image big">
                             <a href={"/n/" + news.slug}>
@@ -54,10 +60,9 @@ const TopCategories = ({ topCat1, topCat2, topCat3, menus }) => {
                               </li>
                               <li>
                                 <FontAwesomeIcon icon={faClock} />
-                                <ReactTimeAgo
-                                  date={news.createAt}
-                                  locale="mn"
-                                />
+                                {moment(news.createAt)
+                                  .utcOffset("+0800")
+                                  .format("YYYY-MM-DD HH:mm:ss")}
                               </li>
                             </div>
                           </div>
@@ -77,7 +82,10 @@ const TopCategories = ({ topCat1, topCat2, topCat3, menus }) => {
                 <div className="row">
                   {topCat2 &&
                     topCat2.map((news) => (
-                      <div className="col-lg-3 col-md-6">
+                      <div
+                        className="col-lg-3 col-md-6"
+                        key={`tn2-${news._id}`}
+                      >
                         <div className="column-news-box">
                           <div className="column-news-image big">
                             <a href={"/n/" + news.slug}>
@@ -105,10 +113,9 @@ const TopCategories = ({ topCat1, topCat2, topCat3, menus }) => {
                               </li>
                               <li>
                                 <FontAwesomeIcon icon={faClock} />
-                                <ReactTimeAgo
-                                  date={news.createAt}
-                                  locale="mn"
-                                />
+                                {moment(news.createAt)
+                                  .utcOffset("+0800")
+                                  .format("YYYY-MM-DD HH:mm:ss")}
                               </li>
                             </div>
                           </div>
@@ -129,7 +136,10 @@ const TopCategories = ({ topCat1, topCat2, topCat3, menus }) => {
                 <div className="row">
                   {topCat3 &&
                     topCat3.map((news) => (
-                      <div className="col-lg-3 col-md-6">
+                      <div
+                        className="col-lg-3 col-md-6"
+                        key={`tp4-${news._id}`}
+                      >
                         <div className="column-news-box">
                           <div className="column-news-image big">
                             <a href={"/n/" + news.slug}>
@@ -156,10 +166,9 @@ const TopCategories = ({ topCat1, topCat2, topCat3, menus }) => {
                               </li>
                               <li>
                                 <FontAwesomeIcon icon={faClock} />
-                                <ReactTimeAgo
-                                  date={news.createAt}
-                                  locale="mn"
-                                />
+                                {moment(news.createAt)
+                                  .utcOffset("+0800")
+                                  .format("YYYY-MM-DD HH:mm:ss")}
                               </li>
                             </div>
                           </div>

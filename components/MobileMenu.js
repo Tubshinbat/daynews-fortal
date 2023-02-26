@@ -1,7 +1,9 @@
-import base from "lib/base";
-import Link from "next/link";
+"use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+const openInNewTab = (url) => {
+  window.open(url, "_blank", "noreferrer");
+};
 
 const renderMenu = (categories) => {
   let myCategories = [];
@@ -77,7 +79,7 @@ const MobileMenu = ({ menus, info, socialLinks }) => {
         <div className="socialMobile">
           {socialLinks &&
             socialLinks.map((el) => (
-              <a href={el.link} key={`${el._id}-som`} target="_blank">
+              <a key={`${el._id}-som`} onClick={() => openInNewTab(el.link)}>
                 <i
                   className={`fa-brands fa-${el.name.toLowerCase()}-square`}
                 ></i>

@@ -1,22 +1,19 @@
-"use client";
 import htmlToFormattedText from "html-to-formatted-text";
-import TimeAgo from "javascript-time-ago";
-import ReactTimeAgo from "react-time-ago";
+import moment from "moment";
 import { faBolt, faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import en from "javascript-time-ago/locale/en.json";
-import mn from "javascript-time-ago/locale/mn.json";
 import base from "lib/base";
-TimeAgo.addDefaultLocale(mn);
-TimeAgo.addLocale(en);
 
 const HighlightNews = ({ news }) => {
+  if (!news) {
+    return <></>;
+  }
   return (
     <>
       <div className="highlight-big">
         <div className="highlight-img">
-          <a href={"/n/" + news.categories[0].slug}>
+          <a href={"/n/" + news.slug}>
             <img src={base.cdnUrl + "/450/" + news.pictures[0]} />
           </a>
         </div>
@@ -40,7 +37,9 @@ const HighlightNews = ({ news }) => {
             </li>
             <li>
               <FontAwesomeIcon icon={faClock} />
-              <ReactTimeAgo date={news.createAt} locale="mn" />
+              {moment(news.createAt)
+                .utcOffset("+0800")
+                .format("YYYY-MM-DD HH:mm:ss")}
             </li>
           </div>
         </div>

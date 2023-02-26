@@ -1,10 +1,9 @@
 const nextConfig = {
-  reactStrictMode: true,
-  // strictMode: true,
   // reactStrictMode: true,
+  // strictMode: false,
+  reactStrictMode: true,
   experimental: {
     appDir: true,
-    scrollRestoration: true,
   },
 };
 

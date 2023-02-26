@@ -1,18 +1,12 @@
-"use client";
 import base from "lib/base";
-import htmlToFormattedText from "html-to-formatted-text";
 
 import { faBolt, faClock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TimeAgo from "javascript-time-ago";
-import ReactTimeAgo from "react-time-ago";
+import moment from "moment";
+import { getNews } from "lib/news";
 
-import en from "javascript-time-ago/locale/en.json";
-import mn from "javascript-time-ago/locale/mn.json";
-TimeAgo.addDefaultLocale(mn);
-TimeAgo.addLocale(en);
-
-const VideoSection = ({ videoNews }) => {
+const VideoSection = async () => {
+  const { news: videoNews } = await getNews(`limit=4&status=true&type=video`);
   return (
     <>
       <section className="section video_section">
@@ -24,7 +18,7 @@ const VideoSection = ({ videoNews }) => {
             <div className="row">
               {videoNews &&
                 videoNews.map((news) => (
-                  <div className="col-lg-3 col-md-6">
+                  <div className="col-lg-3 col-md-6" key={`v-${news._id}`}>
                     <div className="column-news-box">
                       <div className="column-news-image big">
                         <a href={"/n/" + news.slug}>
@@ -49,7 +43,9 @@ const VideoSection = ({ videoNews }) => {
                           </li>
                           <li>
                             <FontAwesomeIcon icon={faClock} />
-                            <ReactTimeAgo date={news.createAt} locale="mn" />
+                            {moment(news.createAt)
+                              .utcOffset("+0800")
+                              .format("YYYY-MM-DD HH:mm:ss")}
                           </li>
                         </div>
                       </div>

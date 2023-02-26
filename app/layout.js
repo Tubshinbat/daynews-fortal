@@ -6,10 +6,6 @@ import "styles/mobile.css";
 import "animate.css";
 import "antd/dist/reset.css";
 
-import TimeAgo from "javascript-time-ago";
-
-import en from "javascript-time-ago/locale/en.json";
-import mn from "javascript-time-ago/locale/mn.json";
 import Footer from "components/Footer";
 import Header from "components/Header";
 import Topbar from "components/Topbar";
@@ -19,15 +15,12 @@ import { getRate } from "lib/rate";
 import { getMenus } from "lib/menus";
 import { getSocials } from "lib/socialLinks";
 
-TimeAgo.addDefaultLocale(mn);
-TimeAgo.addLocale(en);
-
 export default async function RootLayout({ children }) {
-    const { webInfo } = await getWebInfo();
-    const { weather } = await getWeather();
-    const { rates } = await getRate();
-      const { menus } = await getMenus();
-      const {socialLinks } = await getSocials();
+  const { webInfo } = await getWebInfo();
+  const { weather } = await getWeather();
+  const { rates } = await getRate();
+  const { menus } = await getMenus();
+  const { socialLinks } = await getSocials();
   return (
     <html lang="en">
       {/*
@@ -54,7 +47,7 @@ export default async function RootLayout({ children }) {
           rates={rates}
         />
         {children}
-          <Footer info={webInfo} menus={menus} socialLinks={socialLinks} />
+        <Footer info={webInfo} menus={menus} socialLinks={socialLinks} />
       </body>
       <Script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"

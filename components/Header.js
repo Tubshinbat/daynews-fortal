@@ -1,18 +1,11 @@
 "use client";
 import base from "lib/base";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowRight,
-  faBolt,
-  faClock,
-  faPhoneVolume,
-} from "@fortawesome/free-solid-svg-icons";
 
 import { useEffect, useState } from "react";
 import MobileMenu from "./MobileMenu";
 
-export default ({ webInfo, menus, socialLinks, weather, rates }) => {
+const Header = ({ webInfo, menus, socialLinks, weather, rates }) => {
   const [weathers] = useState(weather && JSON.parse(weather).xml);
 
   const renderMenu = (categories, child = false, parentSlug = "") => {
@@ -103,3 +96,5 @@ export default ({ webInfo, menus, socialLinks, weather, rates }) => {
     </>
   );
 };
+
+export default Header;

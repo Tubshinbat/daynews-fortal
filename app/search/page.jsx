@@ -8,12 +8,7 @@ import { getNews } from "lib/news";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import htmlToFormattedText from "html-to-formatted-text";
-import en from "javascript-time-ago/locale/en.json";
-import mn from "javascript-time-ago/locale/mn.json";
-import TimeAgo from "javascript-time-ago";
-import ReactTimeAgo from "react-time-ago";
-TimeAgo.addDefaultLocale(mn);
-TimeAgo.addLocale(en);
+import moment from "moment";
 
 export default function Page({}) {
   const searchParams = useSearchParams();
@@ -48,7 +43,7 @@ export default function Page({}) {
                         <div className="row">
                           <div className="col-md-4">
                             <div className="news__column_image column-search-image">
-                              <a href={`/n/${el._id}`} scroll={false}>
+                              <a href={`/n/${el.slug}`} scroll={false}>
                                 {el.pictures && el.pictures[0] ? (
                                   <img
                                     src={`${base.cdnUrl}/450/${el.pictures[0]}`}
@@ -61,7 +56,7 @@ export default function Page({}) {
                           </div>
                           <div className="col-md-8">
                             <div className="news__column_content">
-                              <a href={`/n/${el._id}`} scroll={false}>
+                              <a href={`/n/${el.slug}`} scroll={false}>
                                 <h4>
                                   {el.name.length > 90
                                     ? el.name.substr(0, 90) + "..."
@@ -75,10 +70,9 @@ export default function Page({}) {
                                 </li>
                                 <li>
                                   <FontAwesomeIcon icon={faClock} />
-                                  <ReactTimeAgo
-                                    date={el.createAt}
-                                    locale="mn"
-                                  />
+                                  {moment(el.createAt)
+                                    .utcOffset("+0800")
+                                    .format("YYYY-MM-DD HH:mm:ss")}
                                 </li>
                               </div>
 

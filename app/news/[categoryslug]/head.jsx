@@ -1,7 +1,5 @@
-import { htmlToText } from "html-to-text";
-import base from "lib/base";
-import { getContent, getSlugCategory } from "lib/news";
-import { usePathname } from "next/navigation";
+
+import {  getSlugCategory } from "lib/news";
 
 export default async function Head({ params }) {
   let title = "Daynews.mn - Мэдээ мэдээлэл";
@@ -13,9 +11,9 @@ export default async function Head({ params }) {
     <>
       <title>{title}</title>
       <meta content="width=device-width, initial-scale=1" name="viewport" />
-      <meta name="description" content={""} />
-      <meta property="og:title" content={""} />
-      <meta property="og:description" content={""} />
+      <meta name="description" content={title} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={title} />
       <meta property="og:image" content={""} />
     </>
   );

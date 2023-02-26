@@ -1,34 +1,18 @@
-"use client";
 import { faBolt, faClock, faFireAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import base from "lib/base";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import TimeAgo from "javascript-time-ago";
-import ReactTimeAgo from "react-time-ago";
 
-import en from "javascript-time-ago/locale/en.json";
-import mn from "javascript-time-ago/locale/mn.json";
+import moment from "moment";
 import { getAdsSide } from "lib/ads";
-TimeAgo.addDefaultLocale(mn);
-TimeAgo.addLocale(en);
+import { getNews } from "lib/news";
 
-export default ({ categories, newNews, fireNews }) => {
-  const [selectTab, setSelectTab] = useState("new");
-  const [ads, setAds] = useState(null);
-
-  useEffect(() => {
-    const fetcherAds = async () => {
-      const { ads } = await getAdsSide();
-      setAds(ads);
-    };
-
-    fetcherAds();
-  }, []);
+export default async () => {
+  const { ads } = await getAdsSide();
+  const { news: newNews } = await getNews(`status=true&limit=9`);
 
   return (
     <>
-      <div className="sides ">
+      <div className="sides sticky-top">
         {ads && ads.length > 0 && (
           <div className="side__item ads">
             <a href={ads[0].link} target="_blank">
@@ -62,7 +46,9 @@ export default ({ categories, newNews, fireNews }) => {
                       </li>
                       <li>
                         <FontAwesomeIcon icon={faClock} />
-                        <ReactTimeAgo date={el.createAt} locale="mn" />
+                        {moment(el.createAt)
+                          .utcOffset("+0800")
+                          .format("YYYY-MM-DD HH:mm:ss")}
                       </li>
                     </div>
                   </div>
@@ -93,7 +79,9 @@ export default ({ categories, newNews, fireNews }) => {
                       </li>
                       <li>
                         <FontAwesomeIcon icon={faClock} />
-                        <ReactTimeAgo date={el.createAt} locale="mn" />
+                        {moment(el.createAt)
+                          .utcOffset("+0800")
+                          .format("YYYY-MM-DD HH:mm:ss")}
                       </li>
                     </div>
                   </div>

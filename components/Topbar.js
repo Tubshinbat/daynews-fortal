@@ -1,9 +1,3 @@
-"use client";
-import base from "lib/base";
-import Link from "next/link";
-
-import { useEffect, useState } from "react";
-
 export default () => {
   const todayMongolia = () => {
     let month, day;

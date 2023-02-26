@@ -1,5 +1,3 @@
-"use client";
-
 export default ({ shareUrl = "a", title = "a" }) => {
   return (
     <>
@@ -7,33 +5,20 @@ export default ({ shareUrl = "a", title = "a" }) => {
         <li>
           <i className="fa fa-share-alt" />
         </li>
-        <li>
+        <li className="facebook">
           <a
-            className="facebook"
             href={`http://www.facebook.com/share.php?u=${shareUrl}`}
             target="popup"
           >
-            <i className="fa-brands fa-facebook-square" />
+            <i className="fa-brands fa-facebook-square" /> Хуваалцах
           </a>
         </li>
-        <li>
+        <li className="twitter">
           <a
-            className="twitter"
             href={`https://twitter.com/intent/tweet?text=${title}&url=${shareUrl}`}
             target="popup"
           >
-            <i className="fa-brands fa-twitter-square" />
-          </a>
-        </li>
-
-        <li>
-          <a
-            className="linkedin"
-            href={`http://www.linkedin.com/shareArticle?mini=true&url=${shareUrl}`}
-            target="popup"
-          >
-            <i className="fa-brands fa-linkedin" />
-            <span />
+            <i className="fa-brands fa-twitter-square" /> Жиргэх
           </a>
         </li>
       </ul>
