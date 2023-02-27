@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "barilga-cms-portal",
+      name: "daynews-cms-portal",
       script: "npm start",
       autorestart: true,
       env: {
